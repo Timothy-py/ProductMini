@@ -1,6 +1,7 @@
 import "dotenv/config";
-import express from "express";
-import { Request, Response } from "express";
+import express, { Request, Response } from "express";
+
+import connectDB from "./services/connectDB";
 
 const APP_PORT: number = parseInt(process.env.APP_PORT);
 
@@ -10,16 +11,19 @@ const app = express();
 app.get("/", (req: Request, res: Response) => {
   return res.send("ProductMini V1 API");
 });
-const authRoutes: any = import("./routes/authRoute");
+import authRouter from "./routes/authRoute";
 
 // MIDDLEWARES
 app.use(express.json());
 
 // SET ROUTES
-app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/auth", authRouter);
+
+// CONNECT DATABASE
+connectDB();
 
 app.listen(APP_PORT, () => {
   console.log("Server is running on PORT: ", APP_PORT);
 });
 
-module.exports = app;
+export default app;
