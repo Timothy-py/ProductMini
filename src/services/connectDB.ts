@@ -1,4 +1,5 @@
 import mongoose, { Connection, model } from "mongoose";
+import logger from "../utilities/logger";
 
 const connectDB = async () => {
   let DATABASE_URI: string;
@@ -17,13 +18,11 @@ const connectDB = async () => {
   await mongoose.connect(DATABASE_URI);
 
   mongoose.connection.on("error", (error: Error) => {
-    console.log(error);
+    logger.error(`Error connecting to Database: ${error.message}`);
     return process.exit(0)
   });
 
-//   mongoose.connection.on("connection", (connection: Connection) => {
-//     "Connection to MongoDB Database established successfully";
-//   });
+  logger.info('Connection to Mongodb database established successfully')
 };
 
 export default connectDB;
