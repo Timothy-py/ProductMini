@@ -18,10 +18,6 @@ const userSchema = new mongoose.Schema<IUser>({
     required: true,
     trim: true,
   },
-  username: {
-    type: String,
-    unique: true,
-  },
   role: {
     type: String,
     required: true,
@@ -31,6 +27,6 @@ const userSchema = new mongoose.Schema<IUser>({
 
 userSchema.set("timestamps", true);
 
-const User = mongoose.model<IUser>("auth", userSchema);
+const User = mongoose.model<IUser>("user", userSchema);
 
 export default User;
