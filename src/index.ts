@@ -9,7 +9,7 @@ const app = express();
 
 // ROUTES
 app.get("/", (req: Request, res: Response) => {
-  return res.send("ProductMini V1 API");
+  return res.send("ProductMini v1 API");
 });
 import authRouter from "./routes/authRoute";
 import logger from "./utilities/logger";
