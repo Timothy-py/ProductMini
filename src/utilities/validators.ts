@@ -28,5 +28,15 @@ const signinSchema = Joi.object({
     ),
 });
 
+const createStoreSchema = Joi.object({
+  name: Joi.string().required(),
+  one_line_pitch: Joi.string().optional(),
+  country: Joi.string().required(),
+  state: Joi.string().required(),
+  address: Joi.string().required(),
+  other_details: Joi.string().optional(),
+});
+
 export const validateSignup = validator(signupSchema);
 export const validateSignin = validator(signinSchema);
+export const validatecreateStore = validator(createStoreSchema);
