@@ -31,7 +31,7 @@ userSchema.set("timestamps", true);
 // Sign JWT
 userSchema.methods.getSignedJWTToken = function () {
   return jwt.sign(
-    { user_id: this.id, role: this.role },
+    { auth_id: this._authId, role: this.role },
     process.env.JWT_SECRET_KEY
   );
 };

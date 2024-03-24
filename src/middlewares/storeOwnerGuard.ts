@@ -37,7 +37,7 @@ const storeOwnerGuard = async (
         .status(403)
         .json({ status: "fail", message: "Not authorized" });
 
-    req.body.user = await User.findById(decoded.user_id);
+    req.body.user = await User.findOne({ _authId: decoded._authId });
     next();
   } catch (error) {
     return res.status(500).json({
