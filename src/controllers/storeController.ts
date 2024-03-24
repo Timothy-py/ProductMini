@@ -4,6 +4,7 @@ import {
   validatecreateStore,
 } from "../utilities/validators";
 import Store from "../models/storeModel";
+import cache from "../services/connectRedis";
 
 /**
  * @description Create a store`
@@ -57,12 +58,28 @@ export const getStoreDetails = async (
 ): Promise<any> => {
   try {
     const storeId: string = req.params.storeId;
+
+    // Retrieve from cache
+    const cachedStore = await cache.get(`store/${storeId}`);
+
+    if (cachedStore) {
+      return res.status(200).json({
+        status: "success",
+        message: "Store details retrieved successfully",
+        data: JSON.parse(cachedStore),
+      });
+    }
+
+    // Retrieve from DB
     const store = await Store.findById(storeId);
 
     if (!store)
       return res
         .status(404)
         .json({ status: "fail", message: "Store not found" });
+
+    // cache data
+    await cache.set(`store/${storeId}`, JSON.stringify(store), "EX", 60);
 
     return res.status(200).json({
       status: "success",
@@ -91,7 +108,21 @@ export const getMyStores = async (
   try {
     const authId = req["user"]._authId;
 
+    // Retrieve from cache
+    const cachedStore = await cache.get(`mystores/${authId}`);
+
+    if (cachedStore) {
+      return res.status(200).json({
+        status: "success",
+        message: "Stores retrieved successfully",
+        data: JSON.parse(cachedStore),
+      });
+    }
+
     const myStores = await Store.find({ _authId: authId });
+
+    // cache data
+    await cache.set(`mystores/${authId}`, JSON.stringify(myStores), "EX", 60);
 
     return res.status(200).json({
       status: "success",
@@ -144,6 +175,9 @@ export const editStore = async (req: Request, res: Response): Promise<any> => {
       { new: true }
     );
 
+    // cache data
+    await cache.set(`store/${storeId}`, JSON.stringify(updatedStore), "EX", 60);
+
     return res.status(200).json({
       status: "success",
       message: "Store updated successfully",
@@ -186,6 +220,9 @@ export const deleteStore = async (
         status: "fail",
         message: "User is not the owner of the store",
       });
+
+    // delete cached store
+    await cache.del(`store/${storeId}`);
 
     // delete the store
     await Store.findByIdAndDelete(storeId);
