@@ -30,12 +30,43 @@ export const createStore = async (
     });
   } catch (error) {
     if (error.code === 11000)
+      return res.status(409).json({
+        status: "fail",
+        message: "A store with that name already exists",
+      });
+    return res.status(500).json({
+      status: "error",
+      error: error.message,
+      message: "An error occurred",
+    });
+  }
+};
+
+/**
+ * @description Get a store`
+ * @route `/api/v1/store/:storeId`
+ * @access Public
+ * @type GET
+ */
+export const getStoreDetails = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const storeId: string = req.params.storeId;
+    const store = await Store.findById(storeId);
+
+    if (!store)
       return res
-        .status(409)
-        .json({
-          status: "fail",
-          message: "A store with that name already exists",
-        });
+        .status(404)
+        .json({ status: "fail", message: "Store not found" });
+
+    return res.status(200).json({
+      status: "success",
+      message: "Store details retrieved successfully",
+      data: store,
+    });
+  } catch (error) {
     return res.status(500).json({
       status: "error",
       error: error.message,
