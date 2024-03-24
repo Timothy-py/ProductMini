@@ -49,7 +49,8 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
   } catch (error) {
     return res.status(500).json({
       status: "error",
-      message: error.message || "An error occurred",
+      error: error.message,
+      message: "An error occurred",
     });
   }
 };
@@ -89,11 +90,12 @@ export const signin = async (req: Request, res: Response): Promise<any> => {
     // Get user
     const user = await User.findOne({ _authId: authProfile._id });
 
-    sendTokenResponse(user, res, {email: email});
+    sendTokenResponse(user, res, { email: email });
   } catch (error) {
     return res.status(500).json({
       status: "error",
-      message: error.message || "An error occurred",
+      error: error.message,
+      message: "An error occurred",
     });
   }
 };
