@@ -157,3 +157,45 @@ export const editStore = async (req: Request, res: Response): Promise<any> => {
     });
   }
 };
+
+/**
+ * @description Delete a store`
+ * @route `/api/v1/stores/:storeId`
+ * @access Private
+ * @type DELETE
+ */
+export const deleteStore = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const authId = req["user"]._authId;
+    const storeId: string = req.params.storeId;
+
+    // Get store
+    const store = await Store.findById(storeId);
+
+    if (!store)
+      return res
+        .status(404)
+        .json({ status: "fail", message: "Store not found" });
+
+    // check if signed user is the owner of the store
+    if (!authId.equals(store._authId))
+      return res.status(403).json({
+        status: "fail",
+        message: "User is not the owner of the store",
+      });
+
+    // delete the store
+    await Store.findByIdAndDelete(storeId);
+
+    return res.status(204).json({});
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      error: error.message,
+      message: "An error occurred",
+    });
+  }
+};

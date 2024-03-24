@@ -4,7 +4,8 @@ import {
   createStore,
   getStoreDetails,
   getMyStores,
-  editStore
+  editStore,
+  deleteStore
 } from "../controllers/storeController";
 import storeOwnerGuard from "../middlewares/storeOwnerGuard";
 
@@ -17,5 +18,7 @@ storeRouter.get("/:storeId", getStoreDetails);
 storeRouter.get("/", storeOwnerGuard, getMyStores);
 
 storeRouter.patch("/:storeId", storeOwnerGuard, editStore);
+
+storeRouter.delete("/:storeId", storeOwnerGuard, deleteStore);
 
 export default storeRouter;

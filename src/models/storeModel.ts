@@ -33,6 +33,8 @@ const storeSchema = new mongoose.Schema<IStore>({
   },
 });
 
+// TODO: include total products in a store field
+
 storeSchema.set("timestamps", true);
 
 // Compound index on authId and name: a store owner cannot have multiple stores with same name
