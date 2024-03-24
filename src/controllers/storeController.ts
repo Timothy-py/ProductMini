@@ -74,3 +74,32 @@ export const getStoreDetails = async (
     });
   }
 };
+
+/**
+ * @description Get my stores`
+ * @route `/api/v1/stores/`
+ * @access Private
+ * @type GET
+ */
+export const getMyStores = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const authId = req["user"]._authId;
+
+    const myStores = await Store.find({ _authId: authId });
+
+    return res.status(200).json({
+      status: "success",
+      message: "Stores retrieved successfully",
+      data: myStores,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      error: error.message,
+      message: "An error occurred",
+    });
+  }
+};

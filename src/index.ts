@@ -20,7 +20,7 @@ app.use(express.json());
 
 // SET ROUTES
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/store", storeRouter);
+app.use("/api/v1/stores", storeRouter);
 
 // CONNECT DATABASE
 connectDB();
