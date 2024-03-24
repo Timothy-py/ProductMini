@@ -6,9 +6,11 @@ export interface IUser {
   lastName: string;
   username: string;
   role: string;
+  getSignedJWTToken: Function
 }
 
 export interface IAuth {
   email: string;
   password: string;
+  matchPassword: Function
 }

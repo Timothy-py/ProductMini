@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 import { UserRole } from "../common/constants/enum";
 import { IUser } from "../common/types/interface";
 
@@ -26,6 +27,14 @@ const userSchema = new mongoose.Schema<IUser>({
 });
 
 userSchema.set("timestamps", true);
+
+// Sign JWT
+userSchema.methods.getSignedJWTToken = function () {
+  return jwt.sign(
+    { user_id: this.id, role: this.role },
+    process.env.JWT_SECRET_KEY
+  );
+};
 
 const User = mongoose.model<IUser>("user", userSchema);
 
