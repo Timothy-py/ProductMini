@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { validateSignin, validateSignup } from "../utilities/validators";
 import Auth from "../models/authModel";
 import User from "../models/userModel";
-import sendTokenResponse from "../utilities/tokenResponse";
+import sendTokenResponse from "../helpers/tokenResponse";
 
 /**
  * @description User signup`
