@@ -55,8 +55,18 @@ const addProductSchema = Joi.object({
   other_details: Joi.string().optional(),
 });
 
+const editProductSchema = Joi.object({
+  name: Joi.string().optional(),
+  description: Joi.string().optional(),
+  price: Joi.number().optional(),
+  units: Joi.number().optional(),
+  status: Joi.string().optional().valid("IN_STOCK", "OUT_OF_STOCK"),
+  other_details: Joi.string().optional(),
+})
+
 export const validateSignup = validator(signupSchema);
 export const validateSignin = validator(signinSchema);
 export const validatecreateStore = validator(createStoreSchema);
 export const validateEditStore = validator(editStoreSchema);
 export const validateAddProduct = validator(addProductSchema);
+export const validateEditProduct = validator(editProductSchema);

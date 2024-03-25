@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
-import { validateAddProduct } from "../utilities/validators";
+import {
+  validateAddProduct,
+  validateEditProduct,
+} from "../utilities/validators";
 import randomImageNameGenerator from "../helpers/nameGenerator";
 import resize from "../utilities/imgResize";
 import { s3_signedUrl, s3_upload } from "../utilities/awsS3";
@@ -125,6 +128,88 @@ export const getProductDetails = async (
       status: "success",
       message: "Product details retrieved successfully",
       data: product,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      error: error.message,
+      message: "An error occurred",
+    });
+  }
+};
+
+/**
+ * @description Edit a product`
+ * @route `/api/v1/products/:productId`
+ * @access Private
+ * @type PATCH
+ */
+export const editProduct = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    // Validate the request body
+    let { error, value } = validateEditProduct(req.body);
+    if (error) return res.status(400).send(error.details);
+
+    const productId: string = req.params.productId;
+
+    // Get product
+    const product = await Product.findById(productId);
+
+    if (!product)
+      return res
+        .status(404)
+        .json({ status: "fail", message: "Product not found" });
+
+    const image = req.file;
+    if (image) {
+      const BUCKET_NAME: string = process.env.BUCKET_NAME;
+      const imageNameID: string = randomImageNameGenerator();
+
+      // resize the image
+      const resizedImage = await resize(image.buffer);
+
+      const uploadParams = {
+        Bucket: BUCKET_NAME,
+        Key: imageNameID,
+        Body: resizedImage,
+        ContentType: image.mimetype,
+      };
+      const getParams = {
+        Bucket: BUCKET_NAME,
+        Key: imageNameID,
+      };
+
+      // Upload image to s3 and get back URI
+      const [, uri] = await Promise.all([
+        s3_upload(uploadParams),
+        s3_signedUrl(getParams),
+      ]);
+
+      value["imageUrl"] = uri;
+    }
+
+    // update the product
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      { ...value },
+      { new: true }
+    );
+
+    // cache data
+    await cache.set(
+      `product/${productId}`,
+      JSON.stringify(updatedProduct),
+      "EX",
+      60
+    );
+
+    return res.status(200).json({
+      status: "success",
+      message: "Product updated successfully",
+      data: updatedProduct,
     });
   } catch (error) {
     return res.status(500).json({
