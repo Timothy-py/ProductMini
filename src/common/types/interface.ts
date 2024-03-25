@@ -31,5 +31,7 @@ export interface IProduct {
   imageUrl: string;
   description?: string;
   price: number;
+  units: number;
+  status?: string;
   other_details?: string;
 }

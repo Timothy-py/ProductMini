@@ -14,13 +14,16 @@ app.get("/", (req: Request, res: Response) => {
 });
 import authRouter from "./routes/authRoute";
 import storeRouter from "./routes/storeRoute";
+import productRouter from "./routes/productRoute";
 
 // MIDDLEWARES
 app.use(express.json());
 
 // SET ROUTES
-app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/stores", storeRouter);
+const BASE_PATH = '/api/v1'
+app.use(`${BASE_PATH}/auth`, authRouter);
+app.use(`${BASE_PATH}/stores`, storeRouter);
+app.use(`${BASE_PATH}/products`, productRouter);
 
 // CONNECT DATABASE
 connectDB();

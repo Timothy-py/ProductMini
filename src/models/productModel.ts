@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { IProduct } from "../common/types/interface";
+import { ProductStatus } from "../common/constants/enum";
 
 const productSchema = new mongoose.Schema<IProduct>({
   _storeId: {
@@ -23,6 +24,16 @@ const productSchema = new mongoose.Schema<IProduct>({
   price: {
     type: Number,
     required: true,
+  },
+  units: {
+    type: Number,
+    required: true,
+  },
+  status: {
+    type: String,
+    required: false,
+    enum: ProductStatus,
+    default: "IN_STOCK"
   },
   other_details: {
     type: String,
