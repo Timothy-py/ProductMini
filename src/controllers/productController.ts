@@ -219,3 +219,40 @@ export const editProduct = async (
     });
   }
 };
+
+/**
+ * @description Delete a product`
+ * @route `/api/v1/products/:productId`
+ * @access Private
+ * @type DELETE
+ */
+export const deleteProduct = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const productId: string = req.params.productId;
+
+    // Get product
+    const product = await Product.findById(productId);
+
+    if (!product)
+      return res
+        .status(404)
+        .json({ status: "fail", message: "Product not found" });
+
+    // delete cached product
+    await cache.del(`product/${productId}`);
+
+    // delete the product
+    await Product.findByIdAndDelete(productId);
+
+    return res.status(204).json({});
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      error: error.message,
+      message: "An error occurred",
+    });
+  }
+};
