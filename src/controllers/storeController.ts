@@ -247,7 +247,7 @@ export const deleteStore = async (
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
     const page: any = req.query.page ? req.query.page : 1;
-    const perPage: any = req.query.perPage ? req.query.perPage : 3;
+    const perPage: any = req.query.perPage ? req.query.perPage : 5;
     const skip: number = (parseInt(page) - 1) * parseInt(perPage);
 
     const storeId: string = req.params.storeId;
