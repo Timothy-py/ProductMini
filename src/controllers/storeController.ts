@@ -5,6 +5,7 @@ import {
 } from "../utilities/validators";
 import Store from "../models/storeModel";
 import cache from "../services/connectRedis";
+import Product from "../models/productModel";
 
 /**
  * @description Create a store`
@@ -237,8 +238,43 @@ export const deleteStore = async (
   }
 };
 
+/**
+ * @description Get all products in a store`
+ * @route `/api/v1/stores/:storeId/products`
+ * @access Public
+ * @type GET
+ */
+export const getAllProducts = async (req: Request, res: Response) => {
+  try {
+    const page: any = req.query.page ? req.query.page : 1;
+    const perPage: any = req.query.perPage ? req.query.perPage : 3;
+    const skip: number = (parseInt(page) - 1) * parseInt(perPage);
+
+    const storeId: string = req.params.storeId;
+
+    const products: any[] = await Product.find({ _storeId: storeId })
+      .skip(skip)
+      .limit(perPage);
+
+    return res.status(200).json({
+      status: "success",
+      message: "Store products retrieved successfully",
+      data: products,
+      count: products.length,
+      page: page,
+      nextPage: page + 1,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      error: error.message,
+      message: "An error occurred",
+    });
+  }
+};
+
 // Helper function
 export const incrementStoreProductCount = async (storeId: string) => {
   await Store.findByIdAndUpdate(storeId, { $inc: { total_products: 1 } });
-  return true
+  return true;
 };
