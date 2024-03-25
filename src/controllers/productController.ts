@@ -111,7 +111,7 @@ export const getProductDetails = async (
     }
 
     // Retrieve from DB
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId).populate("_storeId");
 
     if (!product)
       return res
