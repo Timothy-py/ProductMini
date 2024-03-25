@@ -75,7 +75,7 @@ export const addProduct = async (req: Request, res: Response): Promise<any> => {
     // Emit event to increment total store products count
     eventEmitter.emit("productAdded", { storeId: storeId });
 
-    return res.status(200).json({
+    return res.status(201).json({
       status: "success",
       message: "Product added successfully",
       data: addedProduct,
