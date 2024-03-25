@@ -262,7 +262,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
       data: products,
       count: products.length,
       page: page,
-      nextPage: page + 1,
+      nextPage: parseInt(page) + 1,
     });
   } catch (error) {
     return res.status(500).json({
