@@ -31,9 +31,11 @@ const storeSchema = new mongoose.Schema<IStore>({
     type: String,
     required: false,
   },
+  total_products: {
+    type: Number,
+    default: 0
+  }
 });
-
-// TODO: include total products in a store field
 
 storeSchema.set("timestamps", true);
 

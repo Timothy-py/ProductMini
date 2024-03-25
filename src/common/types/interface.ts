@@ -23,6 +23,7 @@ export interface IStore {
   state: string;
   address: string;
   other_details?: string;
+  total_products: number;
 }
 
 export interface IProduct {

@@ -236,3 +236,9 @@ export const deleteStore = async (
     });
   }
 };
+
+// Helper function
+export const incrementStoreProductCount = async (storeId: string) => {
+  await Store.findByIdAndUpdate(storeId, { $inc: { total_products: 1 } });
+  return true
+};

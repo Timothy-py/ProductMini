@@ -15,6 +15,7 @@ app.get("/", (req: Request, res: Response) => {
 import authRouter from "./routes/authRoute";
 import storeRouter from "./routes/storeRoute";
 import productRouter from "./routes/productRoute";
+import eventListeners from "./events/eventListener";
 
 // MIDDLEWARES
 app.use(express.json());
@@ -27,6 +28,9 @@ app.use(`${BASE_PATH}/products`, productRouter);
 
 // CONNECT DATABASE
 connectDB();
+
+// LOAD EVENT LISTENERS
+eventListeners()
 
 app.listen(APP_PORT, () => {
   logger.info(`Server is running on PORT: ${APP_PORT}`);

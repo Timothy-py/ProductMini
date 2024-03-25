@@ -5,6 +5,7 @@ import resize from "../utilities/imgResize";
 import { s3_signedUrl, s3_upload } from "../utilities/awsS3";
 import Store from "../models/storeModel";
 import Product from "../models/productModel";
+import eventEmitter from "../events/event";
 
 /**
  * @description Add product to a store`
@@ -66,6 +67,9 @@ export const addProduct = async (req: Request, res: Response): Promise<any> => {
       ...value,
     });
     const addedProduct = await Product.create(newProduct);
+
+    // Emit event to increment total store products count
+    eventEmitter.emit('productAdded', {storeId: storeId});
 
     return res.status(200).json({
       status: "success",
