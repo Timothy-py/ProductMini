@@ -6,6 +6,7 @@ import { s3_signedUrl, s3_upload } from "../utilities/awsS3";
 import Store from "../models/storeModel";
 import Product from "../models/productModel";
 import eventEmitter from "../events/event";
+import cache from "../services/connectRedis";
 
 /**
  * @description Add product to a store`
@@ -37,7 +38,7 @@ export const addProduct = async (req: Request, res: Response): Promise<any> => {
     if (error) return res.status(400).send(error.details);
 
     const image = req.file;
-    if(!image) return res.status(400).send('image is required');
+    if (!image) return res.status(400).send("image is required");
     const BUCKET_NAME: string = process.env.BUCKET_NAME;
     const imageNameID: string = randomImageNameGenerator();
 
@@ -69,12 +70,61 @@ export const addProduct = async (req: Request, res: Response): Promise<any> => {
     const addedProduct = await Product.create(newProduct);
 
     // Emit event to increment total store products count
-    eventEmitter.emit('productAdded', {storeId: storeId});
+    eventEmitter.emit("productAdded", { storeId: storeId });
 
     return res.status(200).json({
       status: "success",
       message: "Product added successfully",
       data: addedProduct,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      error: error.message,
+      message: "An error occurred",
+    });
+  }
+};
+
+/**
+ * @description Get a product`
+ * @route `/api/v1/products/:productId`
+ * @access Public
+ * @type GET
+ */
+export const getProductDetails = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const productId: string = req.params.productId;
+
+    // Retrieve from cache
+    const cachedProduct = await cache.get(`product/${productId}`);
+
+    if (cachedProduct) {
+      return res.status(200).json({
+        status: "success",
+        message: "Product details retrieved successfully",
+        data: JSON.parse(cachedProduct),
+      });
+    }
+
+    // Retrieve from DB
+    const product = await Product.findById(productId);
+
+    if (!product)
+      return res
+        .status(404)
+        .json({ status: "fail", message: "Product not found" });
+
+    // cache data
+    await cache.set(`product/${productId}`, JSON.stringify(product), "EX", 60);
+
+    return res.status(200).json({
+      status: "success",
+      message: "Product details retrieved successfully",
+      data: product,
     });
   } catch (error) {
     return res.status(500).json({

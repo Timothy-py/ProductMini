@@ -8,7 +8,7 @@ import cache from "../services/connectRedis";
 
 /**
  * @description Create a store`
- * @route `/api/v1/store`
+ * @route `/api/v1/stores`
  * @access Private
  * @type POST
  */
@@ -48,7 +48,7 @@ export const createStore = async (
 
 /**
  * @description Get a store`
- * @route `/api/v1/store/:storeId`
+ * @route `/api/v1/stores/:storeId`
  * @access Public
  * @type GET
  */
