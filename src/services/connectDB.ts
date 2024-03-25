@@ -6,11 +6,11 @@ const connectDB = async () => {
   const NODE_ENV: string = process.env.NODE_ENV;
 
   if (NODE_ENV === "production") {
-    DATABASE_URI = "";
+    DATABASE_URI = "mongodb://127.0.0.1:27018/productmini";
   } else if (NODE_ENV === "development") {
     DATABASE_URI = "";
-  } else if (NODE_ENV === "staging") {
-    DATABASE_URI = "";
+  } else if (NODE_ENV === "test") {
+    DATABASE_URI = "mongodb://127.0.0.1:27017/productminitest";
   } else {
     DATABASE_URI = "mongodb://127.0.0.1:27017/productmini";
   }
