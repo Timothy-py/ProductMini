@@ -9,7 +9,7 @@ import { s3_signedUrl, s3_upload } from "../utilities/awsS3";
 import Store from "../models/storeModel";
 import Product from "../models/productModel";
 import eventEmitter from "../events/event";
-import cache from "../services/connectRedis";
+// import cache from "../services/connectRedis";
 
 /**
  * @description Add product to a store`
@@ -103,15 +103,15 @@ export const getProductDetails = async (
     const productId: string = req.params.productId;
 
     // Retrieve from cache
-    const cachedProduct = await cache.get(`product/${productId}`);
+    // const cachedProduct = await cache.get(`product/${productId}`);
 
-    if (cachedProduct) {
-      return res.status(200).json({
-        status: "success",
-        message: "Product details retrieved successfully",
-        data: JSON.parse(cachedProduct),
-      });
-    }
+    // if (cachedProduct) {
+    //   return res.status(200).json({
+    //     status: "success",
+    //     message: "Product details retrieved successfully",
+    //     data: JSON.parse(cachedProduct),
+    //   });
+    // }
 
     // Retrieve from DB
     const product = await Product.findById(productId).populate("_storeId");
@@ -122,7 +122,7 @@ export const getProductDetails = async (
         .json({ status: "fail", message: "Product not found" });
 
     // cache data
-    await cache.set(`product/${productId}`, JSON.stringify(product), "EX", 60);
+    // await cache.set(`product/${productId}`, JSON.stringify(product), "EX", 60);
 
     return res.status(200).json({
       status: "success",
@@ -199,12 +199,12 @@ export const editProduct = async (
     );
 
     // cache data
-    await cache.set(
-      `product/${productId}`,
-      JSON.stringify(updatedProduct),
-      "EX",
-      60
-    );
+    // await cache.set(
+    //   `product/${productId}`,
+    //   JSON.stringify(updatedProduct),
+    //   "EX",
+    //   60
+    // );
 
     return res.status(200).json({
       status: "success",
@@ -242,7 +242,7 @@ export const deleteProduct = async (
         .json({ status: "fail", message: "Product not found" });
 
     // delete cached product
-    await cache.del(`product/${productId}`);
+    // await cache.del(`product/${productId}`);
 
     // delete the product
     await Product.findByIdAndDelete(productId);

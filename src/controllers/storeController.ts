@@ -4,7 +4,7 @@ import {
   validatecreateStore,
 } from "../utilities/validators";
 import Store from "../models/storeModel";
-import cache from "../services/connectRedis";
+// import cache from "../services/connectRedis";
 import Product from "../models/productModel";
 
 /**
@@ -28,7 +28,7 @@ export const createStore = async (
       ...value,
     });
     const savedStore = await Store.create(newStore);
-    return res.status(200).json({
+    return res.status(201).json({
       status: "success",
       message: "Store created successfully",
       data: savedStore,
@@ -61,15 +61,15 @@ export const getStoreDetails = async (
     const storeId: string = req.params.storeId;
 
     // Retrieve from cache
-    const cachedStore = await cache.get(`store/${storeId}`);
+    // const cachedStore = await cache.get(`store/${storeId}`);
 
-    if (cachedStore) {
-      return res.status(200).json({
-        status: "success",
-        message: "Store details retrieved successfully",
-        data: JSON.parse(cachedStore),
-      });
-    }
+    // if (cachedStore) {
+    //   return res.status(200).json({
+    //     status: "success",
+    //     message: "Store details retrieved successfully",
+    //     data: JSON.parse(cachedStore),
+    //   });
+    // }
 
     // Retrieve from DB
     const store = await Store.findById(storeId);
@@ -80,7 +80,7 @@ export const getStoreDetails = async (
         .json({ status: "fail", message: "Store not found" });
 
     // cache data
-    await cache.set(`store/${storeId}`, JSON.stringify(store), "EX", 60);
+    // await cache.set(`store/${storeId}`, JSON.stringify(store), "EX", 60);
 
     return res.status(200).json({
       status: "success",
@@ -110,20 +110,20 @@ export const getMyStores = async (
     const authId = req["user"]._authId;
 
     // Retrieve from cache
-    const cachedStore = await cache.get(`mystores/${authId}`);
+    // const cachedStore = await cache.get(`mystores/${authId}`);
 
-    if (cachedStore) {
-      return res.status(200).json({
-        status: "success",
-        message: "Stores retrieved successfully",
-        data: JSON.parse(cachedStore),
-      });
-    }
+    // if (cachedStore) {
+    //   return res.status(200).json({
+    //     status: "success",
+    //     message: "Stores retrieved successfully",
+    //     data: JSON.parse(cachedStore),
+    //   });
+    // }
 
     const myStores = await Store.find({ _authId: authId });
 
-    // cache data
-    await cache.set(`mystores/${authId}`, JSON.stringify(myStores), "EX", 60);
+    // // cache data
+    // await cache.set(`mystores/${authId}`, JSON.stringify(myStores), "EX", 60);
 
     return res.status(200).json({
       status: "success",
@@ -177,7 +177,7 @@ export const editStore = async (req: Request, res: Response): Promise<any> => {
     );
 
     // cache data
-    await cache.set(`store/${storeId}`, JSON.stringify(updatedStore), "EX", 60);
+    // await cache.set(`store/${storeId}`, JSON.stringify(updatedStore), "EX", 60);
 
     return res.status(200).json({
       status: "success",
@@ -223,7 +223,7 @@ export const deleteStore = async (
       });
 
     // delete cached store
-    await cache.del(`store/${storeId}`);
+    // await cache.del(`store/${storeId}`);
 
     // delete the store
     await Store.findByIdAndDelete(storeId);

@@ -1,7 +1,7 @@
-import Redis from "ioredis";
+// import Redis from "ioredis";
 
-const REDIS_URL:string = process.env.REDIS_URL;
+// const REDIS_URL:string = process.env.REDIS_URL;
 
-const cache = new Redis(REDIS_URL);
+// const cache = new Redis(REDIS_URL);
 
-export default cache;
+// export default cache;
